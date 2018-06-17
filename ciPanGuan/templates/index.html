@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>词判官</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../examination-questions.css">
+    <script src="../lib.js"></script>
+    <script src="../template.js"></script>
+    <script src="../createQuestion.js"></script>
+</head>
+<body>
+
+<!-- 头部 -->
+<div id="head">
+    <div class="hd_user">
+        <div class="hd_sculpture">
+            <img src="../头像.jpg" alt="" id="hd_sculpture-img">
+        </div>
+        <div id="hd_name">树上屋</div>
+        <input type="text" id="hd_ambition" title="" maxlength="30" placeholder="给自己一句鸡汤. 点击输入" value=""/>
+    </div>
+    <div class="hd_btn-wrap">
+        <a class="hd_learn" href="#">学习新词</a>
+        <a class="hd_game" href="#">GAME!</a>
+        <a class="hd_setting" href="#">设置</a>
+    </div>
+</div>
+<!-- 头部END -->
+
+<!-- 弹幕区 -->
+<div id="barrage-area"></div>
+<a href="#" id="ba_org-item"></a>
+<!-- 弹幕区END -->
+
+<!-- 底部 -->
+<div id="bottom">
+    <!-- 学习信息 -->
+    <div id="learn-info-box">
+        <div class="lib_inbox">
+            <div class="lib_new-learn">
+                <span class="lib_title">今日新学</span>
+                <span class="lib_learn"><span id="lib_new-learn-num">30</span>个</span>
+            </div>
+
+            <div class="lib_review">
+                <span class="lib_title">今日复习</span>
+                <span class="lib_learn"><span id="lib_review-num">1</span>/2次</span>
+            </div>
+
+            <div class="lib_duration">
+                <span class="lib_title">本月学习时长</span>
+                <span class="lib_learn"><span id="lib_duration-num">14.6</span>H</span>
+            </div>
+        </div>
+
+        <span class="lib-point">下次复习时间在 <span id="lib-time">3:53</span> 后</span>
+    </div>
+    <!-- 学习信息END -->
+
+
+    <!-- 单词量信息 -->
+    <div id="word-quantity-box">
+        <div class="wqb_current-learn">
+            <div class="wqd_text_box">
+                <span id="wqb_wordbook">大学英语四级词汇</span>
+                <a href="#" class="wqb_revise">修改我的目标</a>
+            </div>
+            <div class="wqd_progress-bar-box">
+                <div id="wqd_cl-progress-bar"></div>
+            </div>
+            <div class="wqd_text_box">
+                <span class="wqd_progress"><span id="wqd_complete">2040</span> / <span id="wqd_sum">3500</span></span>
+                <span class="wqb_target-date">预计完成日期：<span id="wqb_time">2018年10月30日</span></span>
+            </div>
+        </div>
+
+        <div class="wqb_sum-word">
+            <div class="wqd_text_box">
+                <span class="wqb_title">我的总单词量</span>
+                <span class="wqb_rank">Lv.<span id="wqb_rank_num">3</span></span>
+            </div>
+            <div class="wqd_progress-bar-box">
+                <div id="wqd_sw-progress-bar"></div>
+            </div>
+            <div class="wqd_text_box">
+                <span class="wqd_progress"><span id="wqd_current-sum">2040</span> / <span id="wqd_next-rank">3500</span></span>
+                <a href="#" class="wqb_upgrade">升级考试>></a>
+            </div>
+        </div>
+    </div>
+    <!-- 单词量信息END -->
+</div>
+<!-- 底部END -->
+
+<script src="../home.js"></script>
+</body>
+</html>
