@@ -167,6 +167,7 @@ mark {
 }
 
 .hd_sculpture {
+    position: relative;
     float: left;
     width: 60px;
     height: 60px;
@@ -175,6 +176,29 @@ mark {
     border: 3px solid rgb(255, 252, 242);
     box-sizing: border-box;
     overflow: hidden;
+}
+
+.hd_sculpture:hover #hd_logout{
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#hd_logout{
+    position: absolute;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+#hd_logout::after{
+    content: "退出";
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    text-decoration: none;
 }
 
 #hd_sculpture-img {
@@ -233,6 +257,16 @@ mark {
     box-shadow: 0 5px 0 rgb(255, 147, 50);
 }
 
+.hd_learn-not-allowed{
+    background-color: rgb(139, 139, 139);
+    box-shadow: 0 5px 0 rgb(75, 75, 74);
+    cursor: not-allowed;
+}
+
+.hd_learn-not-allowed:active{
+    box-shadow: 0 5px 0 rgb(75, 75, 74);
+}
+
 .hd_game {
     width: 160px;
     margin-right: 30px;
@@ -282,19 +316,19 @@ mark {
     color: rgb(255, 252, 242);
     cursor: pointer;
     animation: ba_move linear;
-    transition: box-shadow .3s, transform .3s;
+    transition: box-shadow .3s, margin-top .3s;
 }
 
 .ba_item:hover {
     z-index: 3;
+    margin-top: -25px;
     animation-play-state: paused;
     box-shadow: 0 5px 10px rgba(28, 28, 28, .5);
-    transform: translateY(-5px);
 }
 
 .ba_item:active {
     box-shadow: none;
-    transform: none;
+    margin-top: -20px;;
 }
 
 /*@keyframes ba_move {*/
@@ -428,7 +462,7 @@ mark {
 .wqb_revise,
 .wqd_progress,
 .wqb_target-date,
-.wqb_rank,
+.wqb_level,
 .wqb_upgrade {
     text-decoration: none;
     color: rgb(113, 113, 113);
@@ -437,7 +471,7 @@ mark {
 #wqb_wordbook,
 .wqb_revise,
 .wqb_title,
-.wqb_rank {
+.wqb_level {
     font-size: 18px;
 }
 
@@ -464,12 +498,12 @@ mark {
 }
 
 #wqd_cl-progress-bar {
-    width: 60%;
+    width: 0;
     background-image: linear-gradient(90deg, rgb(255, 147, 50), rgb(255, 121, 0));
 }
 
 #wqd_sw-progress-bar {
-    width: 30%;
+    width: 0;
     background-image: linear-gradient(90deg, rgb(220, 77, 65), rgb(197, 43, 30));
 }
 

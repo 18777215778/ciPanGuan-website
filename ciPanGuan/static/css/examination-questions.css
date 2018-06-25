@@ -38,17 +38,15 @@
 
 .al_btn-box {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     width: 500px;
     margin-top: 100px;
 }
 
-#al_again,
 #al_home{
     display: inline-block;
-    box-sizing: border-box;
     padding: 0 40px;
-    border: 3px solid transparent;
+    border: 3px solid rgb(255, 252, 242);
     border-radius: 10px;
     font-size: 26px;
     line-height: 50px;
@@ -56,25 +54,9 @@
     transition: all .3s;
 }
 
-#al_again{
-    background-color: rgb(255, 252, 242);
-    color: rgb(28, 28, 28);
-}
-
-#al_again:hover{
-    background-color: transparent;
-    border-color: rgb(255, 252, 242);
-    color: rgb(255, 252, 242);
-}
-
-#al_home{
-    border-color: rgb(255, 252, 242);
-}
-
 #al_home:hover{
     background-color: rgb(255, 252, 242);
-    border-color: transparent;
-    color: rgb(28, 28, 28);
+    color: rgb(34, 34, 34);
 }
 
 /* 学习完成时END */
@@ -161,10 +143,10 @@
     flex-flow: row wrap;
 }
 
-#question-one #q_high-paras {
-    filter: blur(10px);
-    transition: filter .1s linear;
-}
+/*#question-one #q_high-paras {*/
+    /*filter: blur(10px);*/
+    /*transition: filter .1s linear;*/
+/*}*/
 
 .q_para {
     padding: 2px 16px;
@@ -184,10 +166,10 @@
 
 }
 
-#question-one .q_zh-para-content {
-    filter: blur(10px);
-    transition: filter .1s linear;
-}
+/*#question-one .q_zh-para-content {*/
+    /*filter: blur(10px);*/
+    /*transition: filter .1s linear;*/
+/*}*/
 
 .q_zh-para-content li {
     margin-bottom: 10px;
@@ -281,12 +263,12 @@
 }
 
 .q_p-correct {
-    background: url("correct.svg") 78px center no-repeat, linear-gradient(90deg, transparent, rgb(28, 28, 28) 70%);
+    background: url("../img/correct.svg") 78px center no-repeat, linear-gradient(90deg, transparent, rgb(28, 28, 28) 70%);
     background-size: 40px, 100%;
 }
 
 .q_p-wrong {
-    background: url("wrong.svg") 78px center no-repeat, linear-gradient(90deg, transparent, rgb(28, 28, 28) 70%);
+    background: url("../img/wrong.svg") 78px center no-repeat, linear-gradient(90deg, transparent, rgb(28, 28, 28) 70%);
     background-size: 40px, 100%;
 }
 

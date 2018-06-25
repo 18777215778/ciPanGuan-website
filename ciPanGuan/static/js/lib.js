@@ -1,6 +1,3 @@
-// 测试所用的数据
-let words = ["style", "display", "block", "setting", "click", "function", "scroll", "I", "add"];
-
 
 // DOM 选择器
 function $(selector, sModel, startNode) {
@@ -30,6 +27,7 @@ function selectFrom(lowerValue, upperValue, debar) {
 // 自定义滚动条
 function definedScrollBar(winOj, scrollOj, barOj) {
 
+    // 初始化
     let everyScroll = 100,
         winH = null,
         scrollH = null,
@@ -38,8 +36,11 @@ function definedScrollBar(winOj, scrollOj, barOj) {
         diff = null,
         mTop = 0,
         detail = null;
+    scrollOj.style.marginTop = "0px";
+    barOj.style.marginTop = "0px";
+    barOj.style.height = "100%";
 
-    // 兼容性设置
+    // 鼠标滚动事件兼容性设置
     let compatible = document.onmousewheel === null ? "mousewheel" : "DOMMouseScroll";
 
     function getHeight() {
@@ -55,12 +56,11 @@ function definedScrollBar(winOj, scrollOj, barOj) {
         if (scale < 1) {barOj.style.height = scale * 100 + "%"}
     }
 
-    // 监听DOM的变动
-    let observer = new MutationObserver(function(mutations) {mutations.forEach(getHeight);});
-    observer.observe(scrollOj, { attributes: true, childList: true, characterData: true, subtree: true});
-
     winOj.addEventListener(compatible, function (event)
     {
+
+        if (scale > 1){return}
+
         // 兼容性设置
         detail = compatible === "mousewheel" ? event.wheelDelta * -1 : detail = event.detail;
 
@@ -82,120 +82,197 @@ function definedScrollBar(winOj, scrollOj, barOj) {
         barOj.style.marginTop = -mTop * scale + "px";
     });
 
+    // 监听DOM的变动
+    let observer = new MutationObserver(function(mutations) {mutations.forEach(getHeight);});
+    observer.observe(scrollOj, { attributes: true, childList: true, characterData: true, subtree: true});
+
     getHeight();
 }
 
 
 // 创建 WebSocket
-function buildSocket() {
+function buildSocket(callbacks) {
     this.socket = new WebSocket("ws://127.0.0.1/socket");
 
+    this.ping = function(){
+
+        socket.send("ping")
+    };
+    setInterval(this.ping, 50000);
+
     this.socket.onopen = function () {
+
         console.log("连接建立");
+
+        // 执行回调函数
+        if (!callbacks){return }
+        for (let i=0; i<callbacks.length; i++){
+            callbacks[i]()
+        }
     };
 
     this.socket.onerror = function () {
+
         console.log("发送数据时, 出现未知错误");
     };
 
     this.socket.onclose = function () {
+
         console.log("连接关闭");
     };
 
     this.socket.onmessage = function (event) {
-        let jsonData = JSON.parse(event);
-        let func = eval(jsonData["callback"]);
-        func(jsonData["data"]);
+
+        let jsonData = JSON.parse(event.data);
+        if (! jsonData instanceof Array){jsonData = [jsonData]}
+        for (let func of jsonData)
+        {
+            if (func["callback"])
+            {
+                setTimeout(function () {
+                    eval(func["callback"])(func["data"]);
+                }, 0);
+            }
+        }
     };
 
     return this.socket;
 }
 
 
-// 数据库工具
+// 数据库方法
 let dbHandler = function () {
 
-    this.handler = function (objSName, method, data) {
-        let objStorage = this.db.transaction(objSName, "readwrite").objectStore(objSName);
+    this.handler = function (objSName, method, data, callback) {
+        let except = ["deleteDB", "closeDB"];
+        let objStorage = null;
+        if (except.indexOf(method) === -1){
+            objStorage = this.db.transaction(objSName, "readwrite").objectStore(objSName);
+        }
+
         switch (method){
-            case "add": this.add(objStorage, data); break;
-            case "get": this.get(objStorage, data); break;
-            case "put": this.put(objStorage, data); break;
+            case "add": this.add(objStorage, data, callback); break;
+            case "get": this.get(objStorage, data, callback); break;
+            case "put": this.put(objStorage, data, callback); break;
+            case "indexGet": this.indexGet(objStorage, data, callback); break;
+            case "count": this.count(objStorage, callback); break;
             case "delItem": this.delItem(objStorage, objSName, data); break;
             case "closeData": this.closeData(objStorage, objSName); break;
+            case "deleteDB": this.deleteDB(objSName); break;
+            case "closeDB": this.closeDB(); break;
         }
     };
 
-    // 操作存储对象的方法
-    this.add = function(objStorage, data){
+
+    /****************************************
+                  操作存储对象的方法
+     ****************************************/
+
+    // 添加一条数据
+    this.add = function(objStorage, data, callback){
         let re = objStorage.add(data);
 
         re.onsuccess = function (event) {
-            console.log("add", event.target.result);
-            return event.result;
+            if(callback){callback(event.target.result);}
         };
 
         re.onerror = function (event) {
-            console.log(event.target.error);
-            return null;
+            console.log("add error", event.target.error);
         }
     };
 
-    this.get = function (objStorage, key) {
+    // 获取一条数据
+    this.get = function (objStorage, key, callback) {
         let re = objStorage.get(key);
 
         re.onsuccess = function (event) {
-            console.log("get", event.result);
-            return event.result;
+            if(callback){callback(event.target.result);}
         };
 
         re.onerror = function (event) {
-            console.log(event.target.error);
-            return null;
+            console.log("get error", event.target.error);
         }
     };
 
-    this.put = function (objStorage, data) {
+    // 更新一条数据
+    this.put = function (objStorage, data, callback) {
         let re = objStorage.put(data);
 
         re.onsuccess = function (event) {
-            console.log("put", event.result);
-            return event.result;
+            if(callback){callback(event.target.result);}
         };
 
         re.onerror = function (event) {
-            console.log(event.target.error);
-            return null;
+            console.log("put error", event.target.error);
         }
     };
 
+    // 删除某一条记录
     this.delItem = function (objStorage, objSName, key) {
-        // 删除某一条记录
+
         objStorage.delete(key);
         console.log("已删除存储空间 <" + objSName + "> 中的" + key);
     };
 
+    // 通过索引获取值
+    this.indexGet = function (objStorage, data, callback) {
+
+        let index = objStorage.index(data["i"]);
+        let re = index.get(data["k"]);
+
+        re.onsuccess = function (event) {
+            if(callback){callback(event.target.result);}
+        };
+
+        re.onerror = function (event) {
+            console.log("indexGet error", event.target.error);
+        }
+    };
+
+    // 存储对象的记录总数
+    this.count = function (objStorage, callback) {
+
+        let re = objStorage.count();
+
+        re.onsuccess = function(event) {
+            let c = event.explicitOriginalTarget.result;
+
+            if (callback){
+                callback(c)
+            }else{
+                localStorage.setItem("wordCount", c)
+            }
+        };
+
+        re.onerror = function (event) {
+            console.log(event)
+        }
+    };
+
+    // 删除存储空间全部记录
     this.closeData = function (objStorage, objSName) {
-        // 删除存储空间全部记录
+
         objStorage.clear();
         console.log("已清空存储空间 <" + objSName + "> 里的所有数据!");
     };
 
+    // 删除数据库
     this.deleteDB = function (dbName) {
-        // 删除数据库
+
         window.indexedDB.deleteDatabase(dbName);
         console.log(dbName + "数据库已删除!");
     };
 
+    //关闭数据库
     this.closeDB = function () {
-        //关闭数据库
+
         this.db.close();
     }
 };
 
 
 // 打开和创建 IndexDB
-let openDB = function(dbName, dbV) {
+let openDB = function(dbName, dbV, callbacks) {
 
     let handler = new dbHandler();
     let request = window.indexedDB.open(dbName, dbV);
@@ -203,6 +280,12 @@ let openDB = function(dbName, dbV) {
     request.onsuccess = function (event) {
         console.log("数据库连接成功");
         handler.db = event.target.result;
+
+        // 执行回调函数
+        if (!callbacks){return }
+        for (let i=0; i<callbacks.length; i++){
+            callbacks[i]()
+        }
     };
 
     request.onerror = function (event) {
@@ -212,27 +295,32 @@ let openDB = function(dbName, dbV) {
     request.onupgradeneeded = function (event) {
         let db = event.target.result;
 
-        // 单词数据存储对象
-        let wordsDB = db.createObjectStore("words", {keyPath: "word"});
-        wordsDB.createIndex("syll", "syll");
-        wordsDB.createIndex("symbolUK", "symbolUK");
-        wordsDB.createIndex("symbolUS", "symbolUS");
-        wordsDB.createIndex("oriWord", "oriWord");
-        wordsDB.createIndex("paraZh", "paraZh");
-        wordsDB.createIndex("paraEn", "paraEn");
-        wordsDB.createIndex("detParaZh", "detParaZh");
-        wordsDB.createIndex("phrase", "phrase");
-        wordsDB.createIndex("highFreProp", "highFreProp");
-        wordsDB.createIndex("highFrePara", "highFrePara");
-        wordsDB.createIndex("sentEn", "sentEn");
-        wordsDB.createIndex("sentDB", "sentDB");
-        wordsDB.createIndex("synonym", "synonym");
-        wordsDB.createIndex("antonym", "antonym");
-        wordsDB.createIndex("affixes", "affixes");
+        // 单词信息数据存储对象
+        let wordsDB = db.createObjectStore("words_info", {keyPath: "word"});
+
+        // 单词存储对象
+        let words = db.createObjectStore("words", {keyPath: "id"});
+        words.createIndex("word", "word", {unique: true});
     };
 
     return handler;
 };
+
+
+// 播放发音
+let playAudio = function () {
+
+    let audioEle = document.createElement("audio");
+    function insideF(data, speak) {
+        if (speak === "uk") {
+            audioEle.src = "data:audio/mp3;base64," + data["proUK"][0];
+        }else{
+            audioEle.src = "data:audio/mp3;base64," + data["proUS"][0];
+        }
+        audioEle.play()
+    }
+    return insideF
+}();
 
 
 // 生成弹幕
@@ -240,13 +328,14 @@ let popWord = function() {
     let popTemplate = document.createElement("a");
     popTemplate.classList.add("ba_item");
     popTemplate.setAttribute("ondragstart", "return false");
-    let speed = window.screen.width/700;
+    let speed = window.screen.width/500;
 
-    function insideF() {
-        let word = words[parseInt(words.length * Math.random())];
+    function insideF(data) {
+
+        let word = data["word"];
         let item = popTemplate.cloneNode(true);
         item.style.top = "calc(" + selectFrom(5, 95) + "%)";
-        len = word.length < 5 ? 4 : word.length;
+        len = word.length < 5 ? 5 : word.length;
         item.style.animationDuration = len * speed + "s";
         item.textContent = word;
         item.addEventListener("animationend", function () {
@@ -449,9 +538,8 @@ function createWordDetailed(word)
     }
     /* 近义词END */
 
-    return tle;
+
+    wordDetailed.data = [tle, wData];
+    wordDetailed.show();
 }
-
-
-// document.body.appendChild(createWordDetailed(wordDDD[9]));
 

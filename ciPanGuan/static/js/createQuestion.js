@@ -4,6 +4,9 @@ let learnData = {
     sequence: [],
     index:0,
     current: null,
+    speak: "us",
+    correct:null,
+    wrong:null
 };
 
 
@@ -50,6 +53,7 @@ let qOne = function () {
 
         function insideF(item)
         {
+
             let fmt = fragment.cloneNode(true);
 
             /* 音节 */
@@ -131,12 +135,12 @@ let qOne = function () {
 function qOneEventHandle(event) {
     let wordEle = $(".q_word", "one", learnData.current);
     let info = wordEle.info;
-    nextQuestion();
-    // switch (true)
-    // {
-    //     case (info.index === info.len) && (event.keyCode === 13): nextQuestion(); break;
-    //     case info.index < info.len: input(); break;
-    // }
+
+    switch (true)
+    {
+        case (info.index === info.len) && (event.keyCode === 13): nextQuestion(); break;
+        case info.index < info.len: input(); break;
+    }
 
     function input()
     {
@@ -156,9 +160,9 @@ function qOneEventHandle(event) {
             info.index++;
 
             // 每输入一个字母, 模糊适当降低. 直到单词拼写完成时, 模糊度将为0
-            let blur = 10 - (10/(info.len))*(info.index);
-            $("#q_high-paras").style.filter = "blur("+ blur +"px)";
-            $(".q_zh-para-content").style.filter = "blur("+ blur +"px)";
+            // let blur = 10 - (10/(info.len))*(info.index);
+            // $("#q_high-paras").style.filter = "blur("+ blur +"px)";
+            // $(".q_zh-para-content").style.filter = "blur("+ blur +"px)";
         }
         else {
             // 输入错误时, 单词左右抖动
@@ -318,15 +322,15 @@ let qTwo = function () {
 /* 第二题的键盘事件处理函数 */
 function qTwoEventHandle(event) {
     let info = learnData.current.info;
-    nextQuestion();
-    // switch (true)
-    // {
-    //     case (info.cor === -1) && (event.keyCode === 13): nextQuestion(); break;
-    //     case (info.index === -1) && (event.keyCode !== 9) :
-    //     case info.cor === -1 : break;
-    //     case event.keyCode === 9:changeOver(); break;
-    //     case event.keyCode === 13: confirm(); break;
-    // }
+
+    switch (true)
+    {
+        case (info.cor === -1) && (event.keyCode === 13): nextQuestion(); break;
+        case (info.index === -1) && (event.keyCode !== 9) :
+        case info.cor === -1 : break;
+        case event.keyCode === 9:changeOver(); break;
+        case event.keyCode === 13: confirm(); break;
+    }
 
     /* 切换选项 */
     function changeOver() {
@@ -363,11 +367,11 @@ function qTwoEventHandle(event) {
         $(".q_p-shade", "one", info.options[info.cor]).classList.add("q_p-correct");
         if (info.index === info.cor)
         {
-            // TODO 播放选择正确的音效
+            learnData.correct.play();
         }
         else
         {
-            // TODO 播放选择错误的音效
+            learnData.wrong.play();
             $(".q_p-shade", "one", info.options[info.index]).classList.add("q_p-wrong");
         }
         // 将 info.cor 设置成 -1 表示这道题目已做
@@ -482,15 +486,15 @@ let qThree = function () {
 /* 第三题的键盘事件处理函数 */
 function qThreeEventHandle(event) {
     let info = learnData.current.info;
-    nextQuestion();
-    // switch (true)
-    // {
-    //     case (info.cor === -1) && (event.keyCode === 13): nextQuestion(); break;
-    //     case (info.index === -1) && (event.keyCode !== 9) :
-    //     case info.cor === -1 : break;
-    //     case event.keyCode === 9:changeOver(); break;
-    //     case event.keyCode === 13: confirm(); break;
-    // }
+
+    switch (true)
+    {
+        case (info.cor === -1) && (event.keyCode === 13): nextQuestion(); break;
+        case (info.index === -1) && (event.keyCode !== 9) :
+        case info.cor === -1 : break;
+        case event.keyCode === 9:changeOver(); break;
+        case event.keyCode === 13: confirm(); break;
+    }
 
     /* 切换选项 */
     function changeOver()
@@ -515,11 +519,11 @@ function qThreeEventHandle(event) {
         $(".q_p-shade", "one", info.options[info.cor]).classList.add("q_p-correct");
         if (info.index === info.cor)
         {
-            // TODO 播放选择正确的音效
+            learnData.correct.play();
         }
         else
         {
-            // TODO 播放选择错误的音效
+            learnData.wrong.play();
             $(".q_p-shade", "one", info.options[info.index]).classList.add("q_p-wrong");
         }
         // 将 info.cor 设置成 -1 表示这道题目已做
@@ -529,14 +533,16 @@ function qThreeEventHandle(event) {
 
 // keyUp 事件
 let keyUpEventEntrust = function (event) {
-    switch (learnData.current.id)
+    let eleId = learnData.current.id;
+    switch (true)
     {
+        case event.keyCode === 32: playAudio(learnData.wordData[learnData.sequence[learnData.index][0]], learnData.speak); break;
         // 交由第一题的键盘事件处理函数
-        case "question-one": qOneEventHandle(event); break;
+        case eleId === "question-one": qOneEventHandle(event); break;
         // 交由第二题的键盘事件处理函数
-        case "question-two": qTwoEventHandle(event); break;
+        case eleId === "question-two": qTwoEventHandle(event); break;
         // 交由第三题的键盘事件处理函数
-        case "question-three": qThreeEventHandle(event); break;
+        case eleId === "question-three": qThreeEventHandle(event); break;
     }
 
 };
@@ -551,7 +557,6 @@ let clickEventEntrust = function (event) {
     {
         case id === "q_quit":
         case id === "al_home": endLearn(); break;
-        case id === "al_again": startLearn(wordDDD);break;
     }
 };
 
@@ -567,31 +572,32 @@ let registrationEvent = function () {
     }
 };
 
-// 显示学习进度信息板
-function showSchedule() {
-    let scheduleBox = scheduleBoxTemplate.cloneNode(true);
-    document.body.appendChild(scheduleBox);
-    setTimeout(function () {
-        $("#q_schedule-box").style.top = "0px";
-    },50);
-}
-
-// 更新学习进度信息板
-function updateSchedule() {
-    $("#sum").textContent = learnData.sequence.length;
-    $("#finish").textContent = learnData.index;
-}
-
-// 移除学习进度信息板
-function removeSchedule() {
-    let scheduleBox = $("#q_schedule-box");
-    let tranEnd = function (){
-        document.body.removeChild(scheduleBox);
-        document.removeEventListener("transitionend", tranEnd, false);
-    };
-    document.addEventListener("transitionend", tranEnd, false);
-    scheduleBox.style.top = "-90px";
-}
+// 学习进度信息板
+let schedule = {
+    // 显示
+    show: function () {
+        let scheduleBox = scheduleBoxTemplate.cloneNode(true);
+        document.body.appendChild(scheduleBox);
+        setTimeout(function () {
+            $("#q_schedule-box").style.top = "0px";
+        },50);
+    },
+    // 更新
+    update: function () {
+        $("#sum").textContent = learnData.sequence.length;
+        $("#finish").textContent = learnData.index;
+    },
+    // 移除
+    remove: function () {
+        let scheduleBox = $("#q_schedule-box");
+        let tranEnd = function (){
+            document.body.removeChild(scheduleBox);
+            document.removeEventListener("transitionend", tranEnd, false);
+        };
+        document.addEventListener("transitionend", tranEnd, false);
+        scheduleBox.style.top = "-90px";
+    }
+};
 
 // 进入下一题
 function nextQuestion() {
@@ -599,7 +605,7 @@ function nextQuestion() {
     if (learnData.current) {
         document.body.removeChild(learnData.current);
         learnData.index++;
-        updateSchedule();
+        schedule.update();
     }
 
     // 准备下一题
@@ -610,6 +616,7 @@ function nextQuestion() {
         let qDOM = eval(question)(learnData.wordData[wordIndex]);
         learnData.current = $(selector, "one", qDOM);
         document.body.appendChild(qDOM);
+        playAudio(learnData.wordData[wordIndex], learnData.speak)
     }
     else
     {
@@ -621,6 +628,7 @@ function nextQuestion() {
 // 开始学习
 function startLearn(data) {
     learnData.wordData = data;
+
     registrationEvent();
     let group = data.length/12;
     let mapping = {
@@ -657,9 +665,23 @@ function startLearn(data) {
         }
     }
 
+    // 设置默认发音
+    speakValue = JSON.parse(localStorage.getItem("setting"))["01"]["values"];
+    if (speakValue["英式发音"]){
+        learnData.speak = "uk"
+    }
+
+    // 添加音效文件
+    let correct = document.createElement("audio");
+    correct.src = "static/audio/correct2.mp3";
+    learnData.correct = correct;
+    let wrong = document.createElement("audio");
+    wrong.src = "static/audio/wrong2.mp3";
+    learnData.wrong = wrong;
+
     setTimeout(function () {
-        showSchedule();
-        updateSchedule();
+        schedule.show();
+        schedule.update();
         nextQuestion();
     }, 500)
 }
@@ -675,12 +697,37 @@ function accomplishLearn() {
 
 // 结束学习
 function endLearn() {
+    if (learnData.index >= learnData.sequence.length)
+    {
+        if ($(".hd_learn").textContent === "学习新词")
+        {
+            socket.send(JSON.stringify([
+                {"qNo":"10", "callback":null, "data":null},
+                {"qNo":"08", "callback":"update.learnInfo", "data":null},
+            ]));
+        }
+        else
+        {
+            socket.send(JSON.stringify([
+                {"qNo":"14", "callback":null, "data":null},
+                {"qNo":"03", "callback":"update.crop", "data":null},
+                {"qNo":"04", "callback":"update.sumWord", "data":null},
+                {"qNo":"08", "callback":"update.learnInfo", "data":null},
+            ]));
+        }
+    }
+
     document.removeEventListener("keyup", keyUpEventEntrust, false);
     document.removeEventListener("click", clickEventEntrust, false);
     document.body.removeChild(learnData.current);
-    removeSchedule();
-    appInit();
+    learnData.wordData = null;
+    learnData.current = null;
+    learnData.index = 0;
+    learnData.sequence = [];
+    learnData.speak = "us";
+    learnData.correct = null;
+    learnData.wrong = null;
+    schedule.remove();
+    homepageInit();
 }
-
-
 

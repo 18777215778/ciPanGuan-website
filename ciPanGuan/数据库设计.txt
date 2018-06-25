@@ -1,0 +1,131 @@
+MongoDB 用户:
+    QQ:
+        openid:
+        userinfo:
+    usetting: 用户的设置
+    userid: 词判官的用户id, 可以在链接中放入此id,
+    sumWord: 用户所学的所有单词
+    wordbook:
+        wordbookID: 用户当前学习的单词本id
+        wbunacc: 当前单词本未学单词; wbunacc减少, wbacced增加.
+        wbacced: 当前单词本已学单词; 当用学习完当日单词, 发送当日所学单词到服器务, 更新此字段.
+            word = {"error": 0}
+        ect: 预计完成时间
+
+    tdrt: 今日复习次数
+    nrt: 下次复习时间
+    learnq: 每日学习量
+    startl: 开启页面的时间(Unix时间)
+    mld: 本月学习时长(单次学习时长计算: 关闭页面的时间 - 开启页面时间; 只记录秒,输出时换算成小时)
+    msent: 鼓励自己的话
+
+
+
+
+后端需要处理的业务:
+    用户开启页面:
+        更新startl字段
+
+
+    用户关闭页面:
+        更新mld字段
+
+    用户完成学习任务:
+        更新sumWord字段
+        更新wbunacc字段
+        更新wbacced字段
+        更新ect字段
+
+    更改学习量
+        更新learnq字段
+        更新ect字段
+
+    更改单词本
+
+    更改今日新学单词数量
+
+    更改设置
+        更新usetting
+
+
+前端需要处理的业务:
+    判定单词是否应从已学单词中移除:
+        当一个单词连续错两次后, 立即把单词发送到服务器, 让其从已学单词中移除.
+
+
+
+indexDB 仅保存单词的数据:
+
+
+
+indexDB :
+    userid: 词判官的用户id, 可以使用 词判官 + 用户id, 来隔绝不同用户
+    sumWord: 用户所学的所有单词, 服务保持同步
+    allwb: 所有的单词本信息(id, 名字, 单词量, );
+    wordbookID: 用户当前学习的单词本id, 服务保持同步
+    wbunacc: 当前单词本未学单词; wbunacc减少, wbacced增加;
+    wbacced: 当前单词本已学单词;
+
+
+
+localStorage
+    保存序列化后的对象, 每次读取和写入都需要反序列化和序列化
+    tdln: 今日学习量
+    reviewnum: 复习次数
+    nreview: 下次复习时间(Unix时间)
+    startl: 开启页面的时间(Unix时间)
+    mld: 本月学习时长(单次学习时长计算: 关闭页面的时间 - 开启页面时间; 只记录秒,输出时换算成小时)
+
+
+{
+    "_id" : "",
+    "qq" : {},
+    "wordbooks" : {},
+    "currentwb" : {
+        "id" : "00",
+        "unacc" : [],
+        "acced" : [],
+        "timeNeeded" : null
+    },
+    "setting" : {
+        "01" : {
+            "name" : "发音选项",
+            "values" : {
+                "英式发音" : false,
+                "美式发音" : true
+            }
+        },
+        "02" : {
+            "name" : "自动发音",
+            "values" : {
+                "开" : false,
+                "关" : true
+            }
+        },
+        "03" : {
+            "name" : "默认释义语言",
+            "values" : {
+                "中文" : false,
+                "英文" : true
+            }
+        }
+    },
+    "sumWord" : [],
+    "level" : 1,
+    "tLearnTime" : null,
+    "tLearnNum" : 12,
+    "tLearnWord" : [],
+    "reviewNum" : 0,
+    "nextReview" : null,
+    "learnq" : "0",
+    "sent" : null,
+    "startl" : null,
+    "studyLength" : 0.0
+}
+
+
+给学习新词按钮加个dateList
+登出功能
+切换单词卡自动播放音频
+鸡汤更新
+学习信息板的显示还是有些逻辑问题
