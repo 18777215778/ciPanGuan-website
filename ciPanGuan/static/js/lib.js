@@ -12,7 +12,7 @@ function $(selector, sModel, startNode) {
 }
 
 
-// 获取指定范围内色随机数
+// 获取指定范围内的随机数
 function selectFrom(lowerValue, upperValue, debar) {
     debar = debar || [];
     let choices = upperValue - lowerValue + 1;
@@ -92,7 +92,7 @@ function definedScrollBar(winOj, scrollOj, barOj) {
 
 // 创建 WebSocket
 function buildSocket(callbacks) {
-    this.socket = new WebSocket("ws://127.0.0.1/socket");
+    this.socket = new WebSocket("ws://www.cipanguan.xin/socket");
 
     this.ping = function(){
 
@@ -324,7 +324,7 @@ let playAudio = function () {
 
 
 // 生成弹幕
-let popWord = function() {
+let createWordBullet = function() {
     let popTemplate = document.createElement("a");
     popTemplate.classList.add("ba_item");
     popTemplate.setAttribute("ondragstart", "return false");

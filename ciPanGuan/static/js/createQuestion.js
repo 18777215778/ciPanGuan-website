@@ -702,17 +702,17 @@ function endLearn() {
         if ($(".hd_learn").textContent === "学习新词")
         {
             socket.send(JSON.stringify([
-                {"qNo":"10", "callback":null, "data":null},
-                {"qNo":"08", "callback":"update.learnInfo", "data":null},
+                {"qNum":"10", "callback":null, "data":null},
+                {"qNum":"08", "callback":"update.learnInfo", "data":null},
             ]));
         }
         else
         {
             socket.send(JSON.stringify([
-                {"qNo":"14", "callback":null, "data":null},
-                {"qNo":"03", "callback":"update.crop", "data":null},
-                {"qNo":"04", "callback":"update.sumWord", "data":null},
-                {"qNo":"08", "callback":"update.learnInfo", "data":null},
+                {"qNum":"14", "callback":null, "data":null},
+                {"qNum":"03", "callback":"update.crop", "data":null},
+                {"qNum":"04", "callback":"update.sumWord", "data":null},
+                {"qNum":"08", "callback":"update.learnInfo", "data":null},
             ]));
         }
     }

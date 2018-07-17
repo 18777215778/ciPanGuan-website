@@ -1,10 +1,4 @@
-
-# 前端对象映射表
-FRONT_END_TARGET_MAPPING = {
-
-}
-
-# 单词量等级
+﻿# 单词量等级
 WORD_QUANTITY_GRADE = {
     1:190,
     2:290,

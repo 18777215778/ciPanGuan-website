@@ -8,16 +8,11 @@ class QQLoginAPI(object):
 
     def __init__(self):
         self.client = tornado.httpclient.HTTPClient()
-        self.client_id = "101482576"
-        self.client_secret = "99dbf58ea2c5f6f0c889634fe080c4d7"
-        self.redirect_uri = "http://127.0.0.1/login/qqlogin"
+        self.client_id = "101486278"
+        self.client_secret = "9656aafc7c20cc749e7fa1f976bf346c"
+        self.redirect_uri = "http://www.cipanguan.xin/login/qqlogin"
 
     def get_Access_Token(self, code):
-        '''
-        获取 Access Token 值
-        :param code: Authorization Code 值
-        :return:
-        '''
         para = urllib.parse.urlencode({
             "grant_type": "authorization_code",
             "client_id": self.client_id,

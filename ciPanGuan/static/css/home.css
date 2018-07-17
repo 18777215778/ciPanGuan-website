@@ -254,7 +254,8 @@ mark {
 }
 
 .hd_learn:active {
-    box-shadow: 0 5px 0 rgb(255, 147, 50);
+    background-color: rgb(235, 127, 50);
+    box-shadow: 0 5px 0 rgb(203, 102, 0);
 }
 
 .hd_learn-not-allowed{
@@ -275,7 +276,8 @@ mark {
 }
 
 .hd_game:active {
-    box-shadow: 0 5px 0 rgb(220, 77, 65);
+    background-color: rgb(199, 78, 66);
+    box-shadow: 0 5px 0 rgb(146, 42, 33);
 }
 
 .hd_setting {
@@ -286,7 +288,8 @@ mark {
 }
 
 .hd_setting:active {
-    box-shadow: 0 5px 0 rgb(87, 185, 239);
+    background-color: rgb(88, 164, 219);
+    box-shadow: 0 5px 0 rgb(28, 120, 182);
 }
 
 /****************************************
@@ -401,6 +404,7 @@ mark {
 }
 
 .lib_learn {
+    text-align: center;
     color: rgb(113, 113, 113);
 }
 

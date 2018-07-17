@@ -29,7 +29,7 @@ let IndexDBInit = {
     },
 
     getWords: function() {
-        socket.send(JSON.stringify([{"qNo":"12", "callback":"IndexDBInit.addWords", "data":null}]));
+        socket.send(JSON.stringify([{"qNum":"12", "callback":"IndexDBInit.addWords", "data":null}]));
     },
 
     addWords: function (data) {
@@ -67,7 +67,7 @@ let  updateLS = {
         if(data){
             localStorage.setItem("setting", JSON.stringify(data));
         }else{
-            socket.send(JSON.stringify([{"qNo":"06","callback":"updateLS.setting", "data":null}]));
+            socket.send(JSON.stringify([{"qNum":"06","callback":"updateLS.setting", "data":null}]));
         }
     },
 
@@ -96,10 +96,12 @@ let startPop = {
     },
 
     running: function () {
-        let index = selectFrom(0, Number(localStorage.getItem("wordCount"))-1, startPop.record);
-        if (startPop.record.length > 7){startPop.record.shift()}
+        let sum = Number(localStorage.getItem("wordCount"));
+        if (sum === 0){ return }
+        let index = selectFrom(0, sum - 1, startPop.record);
+        if (startPop.record.length > 10){startPop.record.shift()}
         startPop.record.push(index);
-        indexDB.handler("words", "get", index, popWord);
+        indexDB.handler("words", "get", index, createWordBullet);
     },
 
     stop: function() {
@@ -260,7 +262,7 @@ let homeClickEventEntrust = function (event) {
 let homeBlurEventEntrust = function (event) {
 
     let sent = event.target.value;
-    socket.send(JSON.stringify([{"qNo":"09", "callback":null, "data":sent}]))
+    socket.send(JSON.stringify([{"qNum":"09", "callback":null, "data":sent}]))
 };
 
 
@@ -307,7 +309,7 @@ let myGoal = {
     open: function(){
         let mg = myGoalTemplate.cloneNode(true);
         document.body.appendChild(mg);
-        socket.send(JSON.stringify([{"qNo":"01", "callback":"myGoal.add", "data":null}]))
+        socket.send(JSON.stringify([{"qNum":"01", "callback":"myGoal.add", "data":null}]))
     },
 
     // 填充数据
@@ -332,7 +334,7 @@ let myGoal = {
     },
 
     // 选择单词本的种类
-    selectClassifyF:    function(ele){
+    selectClassifyF: function(ele){
         try {
             $("#mg_class-focus").id = "";
             $("#mg_classify-icon").id = "";
@@ -412,7 +414,7 @@ let myGoal = {
         $(".hd_learn").dataset["click"] = "";
         let selected = localStorage.getItem("selected");
         let word_num = localStorage.getItem("word_num");
-        socket.send(JSON.stringify([{"qNo":"02", "callback":"update.crop", "data":{"selected":selected, "word_num":word_num}}]));
+        socket.send(JSON.stringify([{"qNum":"02", "callback":"update.crop", "data":{"selected":selected, "word_num":word_num}}]));
 
         localStorage.removeItem("selected");
         localStorage.removeItem("word_num");
@@ -477,7 +479,7 @@ let setting = {
 
     close: function () {
         let setting = JSON.parse(localStorage.getItem("setting"));
-        socket.send(JSON.stringify([{"qNo":"07", "callback":null, "data":setting}]))
+        socket.send(JSON.stringify([{"qNum":"07", "callback":null, "data":setting}]))
     }
 };
 
@@ -494,7 +496,7 @@ let wordDetailed = {
         if(!!data){
             createWordDetailed(data);
         }else{
-            socket.send(JSON.stringify([{"qNo":"11","callback":"wordDetailed.fromServer", "data":wordDetailed.word}]));
+            socket.send(JSON.stringify([{"qNum":"11","callback":"wordDetailed.fromServer", "data":wordDetailed.word}]));
         }
     },
 
@@ -551,9 +553,9 @@ let learnNewWord = {
         learnBtn.dataset["click"] = "false";
 
         if (learnBtn.textContent === "学习新词"){
-            socket.send(JSON.stringify([{"qNo":"05","callback":"learnNewWord.addData", "data":null}]));
+            socket.send(JSON.stringify([{"qNum":"05","callback":"learnNewWord.addData", "data":null}]));
         } else {
-            socket.send(JSON.stringify([{"qNo":"13","callback":"learnNewWord.addData", "data":null}]));
+            socket.send(JSON.stringify([{"qNum":"13","callback":"learnNewWord.addData", "data":null}]));
         }
     },
 

@@ -152,13 +152,15 @@ class MainHandlers(object):
         if (un_info["currentwb"]["id"] != selected) or (un_info["learnq"] != word_num):
             un_info["currentwb"]["id"] = selected
             un_info["learnq"] = word_num
-            un_info["currentwb"]["acced"] = un_info["wordbooks"][selected]["acced"]
+            if selected in un_info["wordbooks"]:
+                un_info["currentwb"]["acced"] = un_info["wordbooks"][selected]["acced"]
+            else:
+                un_info["currentwb"]["acced"] = []
             un_info["currentwb"]["unacc"] = [w for w in wordbook["words"] if w not in un_info["wordbooks"][selected]["acced"]]
             un_info["currentwb"]["timeNeeded"] = math.ceil(len(un_info["currentwb"]["unacc"]) / int(un_info["learnq"])) * 86400
             del un_info["wordbooks"]
 
             cls.ud.update_user_info({"_id":id}, {"$set":un_info})
-
         return cls.show_my_wordbook(id)
 
     @classmethod

@@ -1,13 +1,21 @@
+import functools
+import hashlib
+import json
+import os
+import time
+import urllib.parse
+import uuid
+from concurrent.futures import ThreadPoolExecutor
+
+import tornado.gen
+import tornado.ioloop
 import tornado.web
 import tornado.websocket
-import tornado.ioloop
-import tornado.gen
 from tornado.concurrent import run_on_executor
-from concurrent.futures import ThreadPoolExecutor
+
 from DatabaseHandler import userDBHandler
 from mainHandlers import MainHandlers
 from QQLoginAPI import QQLoginAPI
-import os, hashlib, urllib.parse, uuid, json, time, functools
 
 LOGIN_USER = {}
 
@@ -56,10 +64,6 @@ class QQLoginHandler(BaseHandler):
 
     @tornado.gen.coroutine
     def __startToLoginQQ(self):
-        '''
-
-        :return:
-        '''
         code = self.get_argument("code")
         state = self.get_argument("state")
         if (not LOGIN_USER) or (state not in LOGIN_USER):
@@ -195,14 +199,15 @@ class SocketHandler(tornado.websocket.WebSocketHandler, BaseHandler):
 
         self.write_message(json.dumps(msgs))
 
+    @tornado.gen.coroutine
     def __work(self, un_id, msg):
 
-        if msg["qNo"] == "01":
+        if msg["qNum"] == "01":
             # 显示我的目标板板块
             msg["data"] = MainHandlers.show_my_goal(un_id)
             return msg
 
-        elif msg["qNo"] == "02":
+        elif msg["qNum"] == "02":
             # 修改我的目标
             msg["data"] = MainHandlers.update_my_goal(un_id, msg["data"])
             if msg["data"]:
@@ -211,17 +216,17 @@ class SocketHandler(tornado.websocket.WebSocketHandler, BaseHandler):
                 msg["callback"] = None
                 return msg
 
-        elif msg["qNo"] == "03":
+        elif msg["qNum"] == "03":
             # 查看当前正在学习的单词本的进度
             msg["data"] = MainHandlers.show_my_wordbook(un_id)
             return msg
 
-        elif msg["qNo"] == "04":
+        elif msg["qNum"] == "04":
             # 查看总单词量
             msg["data"] = MainHandlers.show_my_sum_word(un_id)
             return msg
 
-        elif msg["qNo"] == "05":
+        elif msg["qNum"] == "05":
             # 学习新词
             msg["data"] = MainHandlers.learn_new_words(un_id)
             if msg["data"] == 1:
@@ -230,47 +235,47 @@ class SocketHandler(tornado.websocket.WebSocketHandler, BaseHandler):
                 msg["callback"] = None
             return msg
 
-        elif msg["qNo"] == "06":
+        elif msg["qNum"] == "06":
             # 查看设置
             msg["data"] = MainHandlers.show_my_setting(un_id)
             return msg
 
-        elif msg["qNo"] == "07":
+        elif msg["qNum"] == "07":
             # 修改设置
             msg["data"] = MainHandlers.update_my_setting(un_id, msg["data"])
             return msg
 
-        elif msg["qNo"] == "08":
+        elif msg["qNum"] == "08":
             # 显示学习信息
             msg["data"] = MainHandlers.show_learn_info(un_id)
             return msg
 
-        elif msg["qNo"] == "09":
+        elif msg["qNum"] == "09":
             # 修改鸡汤
             msg["data"] = MainHandlers.update_sentence(un_id, msg["data"])
             return msg
 
-        elif msg["qNo"] == "10":
+        elif msg["qNum"] == "10":
             # 更新今日新学
             msg["data"] = MainHandlers.update_today_learn(un_id)
             return msg
 
-        elif msg["qNo"] == "11":
+        elif msg["qNum"] == "11":
             # 获取一个单词的信息
             msg["data"] = MainHandlers.get_one_word(msg["data"])
             return msg
 
-        elif msg["qNo"] == "12":
+        elif msg["qNum"] == "12":
             # 获取所有已学单词列表
             msg["data"] = MainHandlers.get_sum_word(un_id)
             return msg
 
-        elif msg["qNo"] == "13":
+        elif msg["qNum"] == "13":
             # 复习
             msg["data"] = MainHandlers.review(un_id)
             return msg
 
-        elif msg["qNo"] == "14":
+        elif msg["qNum"] == "14":
             # 完成复习
             msg["data"] = MainHandlers.update_review(un_id)
             return msg
@@ -292,7 +297,7 @@ class Application(tornado.web.Application):
             "template_path": os.path.join(os.path.dirname(__file__), "templates"),
             "static_path": os.path.join(os.path.dirname(__file__), "static"),
             "login_url": "/login",
-            "cookie_secret": "123",
+            "cookie_secret": "5635390011",
         }
 
         self.ud = userDBHandler()
